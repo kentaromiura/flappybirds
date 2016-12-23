@@ -11,10 +11,33 @@
             padding: 0;
             background-color: #000000;
         }
+        canvas {
+            height:100vh;
+            width:100vw;
+        }
     </style>
     <script src="js/libs/pixi.js"></script>
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
+    <link rel="import" href="bower_components/paper-button/paper-button.html">
+    <link rel="import" href="bower_components/neon-animation/neon-animations.html">
+
 </head>
 <body style="text-align: center; margin-top: 20px">
     <script src="js/stage.wrup"></script>
+    <paper-dialog id="animated" modal entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+        <h2>Get Ready</h2>
+        <p>We'll start straight away</p>
+            <div class="buttons">
+                <paper-button dialog-confirm autofocus onclick="start()">Let's start</paper-button>
+            </div>
+        </paper-dialog>
+    <paper-dialog id="score" modal entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+        <h2>YOU ARE DEAD</h2>
+        <p>Your score is: <span></span></p>
+        <div class="buttons">
+            <paper-button dialog-confirm autofocus onclick="restart()">Let's start again</paper-button>
+        </div>
+    </paper-dialog>
 </body>
 </html>

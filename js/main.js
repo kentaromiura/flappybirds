@@ -29,32 +29,40 @@ var topPipesTexture = PIXI.Texture.fromImage("images/pipe.png")
 var bottomPipes = []
 var topPipes = []
 
+
 var first_pipe_position = stageWidth + 200,
     distance_between_pipes = 500
     
-for (var i = 0; i < NUM_PIPES; i++) {
-    bottomPipes.push(new PIXI.Sprite(pipesTexture));
-    bottomPipes[i].velocity = v(-scrollSpeed, 0)
-    
-    var randomOffset = Math.random() * 400
-    //var topY = -stageHeight - 
-    var topY = randomOffset - stageHeight
-    var bottomY = topY + 1000
-    
-    //stageHeight - 100 - floorHeight +randomHeight
-    bottomPipes[i].position = v(first_pipe_position + i*distance_between_pipes, bottomY)
-    bottomPipes[i].acceleration = v(0,0)
-    bottomPipes[i].scale.x = 0.8
+var randomOffset = Math.random() * 400
+var topY = randomOffset - stageHeight
+var bottomY = topY + 1000
 
-    topPipes.push(new PIXI.Sprite(pipesTexture));
-    topPipes[i].anchor.y = 1
-    topPipes[i].scale.y = -1
-    topPipes[i].scale.x = 0.8
-    topPipes[i].velocity = v(-scrollSpeed, 0)
-    topPipes[i].position = v(first_pipe_position + i*distance_between_pipes, topY)
-    topPipes[i].acceleration = v(0,0)
+function insertPipes() {
+    var removePipeFromStage = function(pipe){
+        stage.removeChild(pipe);
+    }
+    bottomPipes.forEach(removePipeFromStage);
+    topPipes.forEach(removePipeFromStage);
+    bottomPipes = [];
+    topPipes = [];
+    for (var i = 0; i < NUM_PIPES; i++) {
+        bottomPipes.push(new PIXI.Sprite(pipesTexture));
+        bottomPipes[i].velocity = v(-scrollSpeed, 0)
+
+        bottomPipes[i].position = v(first_pipe_position + i*distance_between_pipes, bottomY)
+        bottomPipes[i].acceleration = v(0,0)
+        bottomPipes[i].scale.x = 0.8
+
+        topPipes.push(new PIXI.Sprite(pipesTexture));
+        topPipes[i].anchor.y = 1
+        topPipes[i].scale.y = -1
+        topPipes[i].scale.x = 0.8
+        topPipes[i].velocity = v(-scrollSpeed, 0)
+        topPipes[i].position = v(first_pipe_position + i*distance_between_pipes, topY)
+        topPipes[i].acceleration = v(0,0)
+    }
 }
-     
+insertPipes();
 
 var background = new PIXI.TilingSprite(backgroundTexture, stageWidth, stageHeight)
 background.position.x = 0;
@@ -106,7 +114,9 @@ function create(clone){
         //bird.position.x = 30
     }
     
-    bird.onclick = function(){
+    bird.onclick = function(e){
+        // click on the modal.
+        if (!bird.velocity) return;
         if (!bird.isDead) {
             bird.velocity.y = -15
         }
@@ -184,9 +194,11 @@ function animate()
             topPipes[i].position.x -= scrollSpeed
         }
         resetPipes()
+    } else {
+        showDeadMessage();
     }
 
-    requestAnimFrame(animate);
+    requestAnimationFrame(animate);
 
     // render the stage
     renderer.render(stage);
@@ -292,7 +304,41 @@ document.addEventListener('mousedown', function(event) {
     click();
 });
 
-requestAnimFrame(animate);
+window.onload = function(){
+    document.getElementById('animated').open();
+}
+
+var started = false;
+
+window.start = function() {
+    if (!started) {
+        started = true; 
+        requestAnimationFrame(animate);
+    }
+}
+
+window.restart = function() {
+    score = 0;
+    updateScore(0);
+    insertPipes();
+    for(i = 0; i < bottomPipes.length; i++){
+      stage.addChild(bottomPipes[i])
+    }
+    for(i = 0; i < topPipes.length; i++){
+      stage.addChild(topPipes[i])
+    }
+var bird = create();
+    birds.push(bird)
+
+    stage.addChild(bird);
+}
+
+function showDeadMessage(){
+    var scoreDialog = document.getElementById('score');
+    scoreDialog.querySelector('p span').innerHTML = score;
+    started = false;
+    scoreDialog.open();
+}
 
 
 }
