@@ -194,11 +194,11 @@ function animate()
             topPipes[i].position.x -= scrollSpeed
         }
         resetPipes()
+        requestAnimationFrame(animate);
+
     } else {
         showDeadMessage();
     }
-
-    requestAnimationFrame(animate);
 
     // render the stage
     renderer.render(stage);
@@ -294,6 +294,7 @@ function deadise(bird) {
         checkAndRemoveClick(bird)
     }
 }
+
 document.addEventListener('keydown', function(event) {
     if(event.keyCode == 32) {
         click();
@@ -304,12 +305,15 @@ document.addEventListener('mousedown', function(event) {
     click();
 });
 
+document.addEventListener('touchend', function(event) {
+   if (event.path && event.path[0] instanceof HTMLCanvasElement) click();
+});
+
 window.onload = function(){
     document.getElementById('animated').open();
 }
 
 var started = false;
-
 window.start = function() {
     if (!started) {
         started = true; 
@@ -327,10 +331,13 @@ window.restart = function() {
     for(i = 0; i < topPipes.length; i++){
       stage.addChild(topPipes[i])
     }
-var bird = create();
-    birds.push(bird)
+    setTimeout(function(){
+    var bird = create();
+        birds.push(bird)
 
-    stage.addChild(bird);
+        stage.addChild(bird);
+        requestAnimationFrame(animate);
+    }, 300); // wait for animation to end.
 }
 
 function showDeadMessage(){

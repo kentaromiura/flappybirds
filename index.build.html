@@ -257,10 +257,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         topPipes[i].position.x -= scrollSpeed;
                     }
                     resetPipes();
+                    requestAnimationFrame(animate);
                 } else {
                     showDeadMessage();
                 }
-                requestAnimationFrame(animate);
                 renderer.render(stage);
             }
             var accelerate = require('3');
@@ -352,6 +352,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             document.addEventListener('mousedown', function (event) {
                 click();
             });
+            document.addEventListener('touchend', function (event) {
+                if (event.path && event.path[0] instanceof HTMLCanvasElement)
+                    click();
+            });
             window.onload = function () {
                 document.getElementById('animated').open();
             };
@@ -372,9 +376,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 for (i = 0; i < topPipes.length; i++) {
                     stage.addChild(topPipes[i]);
                 }
-                var bird = create();
-                birds.push(bird);
-                stage.addChild(bird);
+                setTimeout(function () {
+                    var bird = create();
+                    birds.push(bird);
+                    stage.addChild(bird);
+                    requestAnimationFrame(animate);
+                }, 300);
             };
             function showDeadMessage() {
                 var scoreDialog = document.getElementById('score');
